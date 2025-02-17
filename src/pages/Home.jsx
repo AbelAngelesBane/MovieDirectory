@@ -1,15 +1,34 @@
 import MovieCard from "../components/MovieCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { searchMovies, getPopularMovies } from "../services/api";
+import {ring} from 'ldrs';
+
+ring.register()
 
 function Home(){
 
-    const [searchQuery, setSearchQuery] = useState("");
 
-    const movies = [
-        {id:1, title: "A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born A star is Born", release_date: "2018", url: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSTqyFamk1ts0ZAeCGOLHX6zHd75mmyTd4mlpXW2O7UwXkd4Aqh_Mum0P79MisrvH9-rQBf0Q"},
-        {id:2, title: "Black Panther", release_date: "2018", url: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSTwuum2N-2T-KCeMdd4g1BHXP1XGZ9LYajXyYgPUWVs8CicDhfEc2YqTsxtFvQrL3jauHd1g"},
-        {id:3, title: "Mamma Mia", release_date: "2008", url:"https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQEOV3lsKoMR0Gr57TlQHEcmM-9M_9e5xH7rb4a5Kqi2Nhmy6ZVgGduuQb6d3Xvv8BKz0-h"}
-    ];
+    const [searchQuery, setSearchQuery] = useState(""); 
+    const [movies, setMovies] = useState([]); 
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+
+    // useEffect(): ()=> function that runs, if dependency array changes it will re-run the function, if there's only
+    // an empty array, it will only run once
+    useEffect(() => {
+        const loadPopularMovies = async () => {
+            try{
+                const popularMovies = await getPopularMovies();
+                setMovies(popularMovies);
+            } catch (err){
+                console.log(err)
+                setError(err);
+            }
+            finally{setLoading(false)}
+        }
+        loadPopularMovies(); 
+    }, [])
 
     const handleSearch = (e) =>{
         e.preventDefault();
@@ -23,17 +42,26 @@ function Home(){
             className="search-input w-full"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}/>
-
             <button type="submit" className="search-button p-4 bg-red-700 cursor-pointer text-white">Search</button>
         </form>
-
-        <div>
-            <div className="grid w-full gap-8 md:grid-cols-2 sm:grid-cols-1 lg:grid-cols-3 mt-4">
+        {
+            error && <div className="error-message">{error}</div>
+        }
+        {        
+            loading ? 
+            <div className="w-full text-center justify-center content-center p-12 text-amber-50 space-y-6"> 
+                <l-ring size="80" color="red"></l-ring> 
+                <p>Loading......</p>
+            </div> : 
+            <div>
+                <div className="grid w-full gap-8 md:grid-cols-2 sm:grid-cols-1 lg:grid-cols-3 mt-4">
                 {                  
                   movies.map((mov) => (mov.title.toLowerCase().includes(searchQuery.toLowerCase()) && (<MovieCard key={mov.id} movie={mov}/>)))  
                 }
+                </div>
             </div>
-    </div>
+        }    
+        
     </>
 }
 
