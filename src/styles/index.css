@@ -42,10 +42,28 @@
   @apply bg-white text-[var(--color-tertiary)] opacity-40
 }
 .movie-overlay:hover{
-  @apply bg-gray-900/50
+  @apply bg-gray-900/20
 }
+.favorite-btn{
+  @apply absolute right-0 m-3 hidden
+}
+
+
 .movie-overlay:hover 
 .favorite-btn{
-  @apply border-none rounded-full bg-gray-800 text-center h-6 w-6 flex justify-center
+  @apply border-none rounded-full bg-gray-800 text-center h-6 w-6 flex justify-center cursor-pointer
 }
- 
+.movie-overlay:hover 
+.favorite-btn.active{
+  @apply border-none rounded-full bg-red-500 text-center h-6 w-6 flex justify-center cursor-pointer
+}
+.movie-overlay:hover 
+.favorite-btn.active:hover{
+  @apply border-none rounded-full bg-red-500 text-center h-6 w-6 flex justify-center cursor-pointer
+}
+
+.movie-overlay:hover 
+.favorite-btn:hover{
+  @apply bg-white/50
+}
+
